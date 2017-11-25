@@ -91,20 +91,23 @@ class Volt extends Engine
 	 */
 	public function render(string! templatePath, var params, boolean mustClean = false)
 	{
-		var compiler, compiledTemplatePath, key, value;
+		var compiler, compiledTemplatePath, key, value, compiledPath;
 
 		if mustClean {
 			ob_clean();
 		}
-
-		/**
-		 * The compilation process is done by Phalcon\Mvc\View\Engine\Volt\Compiler
-		 */
-		let compiler = this->getCompiler();
-
-		compiler->compile(templatePath);
-
-		let compiledTemplatePath = compiler->getCompiledTemplatePath();
+        if  isset this->_options["compileAlwaysExtended"] && this->_options["compileAlwaysExtended"] == false {
+            let compiledPath = this->_options["compiledPath"];
+            let compiledTemplatePath = call_user_func_array(compiledPath, [templatePath, this->_options, false]);
+            /*throw new Exception(compiledTemplatePath);*/
+		} else {
+            /**
+             * The compilation process is done by Phalcon\Mvc\View\Engine\Volt\Compiler
+             */
+            let compiler = this->getCompiler();
+		    compiler->compile(templatePath);
+		    let compiledTemplatePath = compiler->getCompiledTemplatePath();
+        }
 
 		/**
 		 * Export the variables the current symbol table
@@ -115,7 +118,7 @@ class Volt extends Engine
 			}
 		}
 
-		require compiledTemplatePath;
+        require compiledTemplatePath;
 
 		if mustClean {
 			this->_view->setContent(ob_get_contents());
