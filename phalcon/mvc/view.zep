@@ -209,6 +209,14 @@ class View extends Injectable implements ViewInterface
 		return this;
 	}
 
+    /**
+    * Set multiple view dirs
+    */
+	public function setViewsDirs(var viewsDirs) -> <View> {
+        let this->_viewsDirs = viewsDirs;
+        return this;
+	}
+
 	/**
 	 * Gets views directory
 	 */
@@ -692,6 +700,9 @@ class View extends Injectable implements ViewInterface
 				}
 
 				let viewEnginePaths[] = viewEnginePath;
+			}
+			if notExists == false {
+			    break;
 			}
 		}
 
